@@ -1,4 +1,6 @@
-﻿namespace ApiSikkerhedsProjekt.Security
+﻿using Microsoft.AspNetCore.Http;
+
+namespace ApiSikkerhedsProjekt.Security
 {
   public class SecurityMiddleware : IMiddleware
   {
@@ -18,8 +20,23 @@
         .ToLower()
         .Split(_separator as char[], StringSplitOptions.RemoveEmptyEntries)
         .FirstOrDefault() ?? string.Empty;
+
+      if (!context.Request.IsHttps)
+      {
+        context.Abort();
+        return;
+      }
+
+      //var headerVerification = await _headerSecurity.HeaderVerification(context.Request);
+      //context.Request = headerVerification;
+
       if (!controller.StartsWith("swagger"))
       {
+        if (context.Request.Headers.ContentType != "application/json")
+        {
+          context.Abort();
+          return;
+        }
         if (!await ValidateCredentials(context.Request))
         {
           context.Response.Clear();
@@ -35,45 +52,26 @@
     {
       try
       {
-        //if (request.Headers.TryGetValue("api-key", out var headerValues))
-        //{
-        //  var headerValue = headerValues.FirstOrDefault();
-        //  if (headerValue is null)
-        //  {
-        //    _logger.LogError("Forkert api-key {headerValue}", headerValue ?? "NoApiKeyFound");
-        //    return false;
-        //  }
-        //  if (!headerValue.Equals("5C37881C-150F-42EC-941D-A35620E46036"))
-        //  {
-        //    _logger.LogError("Forkert api-key {headerValue}", headerValue ?? "NoApiKeyFound");
-        //    return false;
-        //  }
-        //}
-        //else
-        //{
-        //  _logger.LogError("Manglende API-KEY");
-        //  return false;
-        //}
-
-        var clientKey = string.Empty;
-        var clientSecret = string.Empty;
-        if (request.Headers.TryGetValue("api-key", out var clientKeys))
+        var key = string.Empty;
+        var secret = string.Empty;
+        if (request.Headers.TryGetValue("api-key", out var keys))
         {
-          clientKey = clientKeys.FirstOrDefault();
+          key = keys.FirstOrDefault();
         }
 
-        if (request.Headers.TryGetValue("api-secret", out var clientSecrets))
+        if (request.Headers.TryGetValue("api-secret", out var secrets))
         {
-          clientSecret = clientSecrets.FirstOrDefault();
+          secret = secrets.FirstOrDefault();
         }
 
-        if (string.IsNullOrEmpty(clientKey) || string.IsNullOrEmpty(clientSecret))
+        if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(secret))
         {
-          _logger.LogError("Security Fejl: clientkey: {clientKey}, clientSecret:{clientSecret}",
-            clientKey ?? "NoClientKeyFound", clientSecret ?? "NoClientSecretFound");
+          _logger.LogError("Security Fejl: key: {clientKey}, secret:{clientSecret}",
+            key ?? "NoKeyFound", secret ?? "NoSecretFound");
           return false;
         }
-        return await _apiSecurityHelper.ValidateKeySecret(clientKey, clientSecret);
+        var test = await _apiSecurityHelper.ValidateKeySecret(key, secret);
+        return test;
       }
       catch (Exception e)
       {
@@ -81,32 +79,6 @@
       }
 
       return false;
-    }
-
-    private async Task<HttpRequest> HeaderVerification(HttpRequest httpRequest)
-    {
-      try
-      {
-        return httpRequest;
-      }
-      catch (Exception e)
-      {
-        _logger.LogCritical(e, "HeaderVerification failed in validating the Headers");
-        throw;
-      }
-    }
-
-    private async Task<HttpResponse> HeaderSanitization(HttpResponse httpResponse)
-    {
-      try
-      {
-        return httpResponse;
-      }
-      catch (Exception e)
-      {
-        _logger.LogCritical(e, "HeaderSanitization failed in sanitizing the Headers");
-        throw;
-      }
     }
   }
 }

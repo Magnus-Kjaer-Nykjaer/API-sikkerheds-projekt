@@ -1,4 +1,8 @@
-﻿using System.Data.SQLite;
+﻿using System;
+using System.Data.SQLite;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.DataProtection;
+using RepoDb;
 
 namespace ApiSikkerhedsProjekt.Security
 {
@@ -15,33 +19,35 @@ namespace ApiSikkerhedsProjekt.Security
 
     public async Task<bool> ValidateKeySecret(string key, string secret)
     {
-      if (!CheckIfTableExistsIfNotCreate()) return false;
+      if (!await CheckIfTableExistsIfNotCreate()) return false;
 
       var query = @$"SELECT * FROM Security 
-                      WHERE API-KEY = {key} 
-                      AND API-SECRET = {secret}";
+                      WHERE APIKEY = @{nameof(key)} 
+                      AND APISECRET = @{nameof(secret)} ";
 
       using var conn = new SQLiteConnection(_connectionString);
       conn.Open();
-      using var command = new SQLiteCommand(query, conn);
-
-      command.ExecuteNonQuery();
+      var result = await conn.ExecuteQueryAsync<object>(query, new
+      {
+        key,
+        secret
+      });
       conn.Close();
-      return true;
+      return result.Any();
     }
 
-    private bool CheckIfTableExistsIfNotCreate()
+    private async Task<bool> CheckIfTableExistsIfNotCreate()
     {
       try
       {
-        var query = "CREATE TABLE Security (id INTEGER PRIMARY KEY, API-KEY TEXT, API-SECRET uniqueidentifier)";
+        var query = "CREATE TABLE IF NOT EXISTS Security (id INTEGER PRIMARY KEY, APIKEY TEXT, APISECRET uniqueidentifier)";
 
-        using var conn = new SQLiteConnection(_connectionString);
+        await using var conn = new SQLiteConnection(_connectionString);
         conn.Open();
-        using var command = new SQLiteCommand(query, conn);
-
-        command.ExecuteNonQuery();
+        var res = await conn.ExecuteNonQueryAsync(query);
         conn.Close();
+
+        InsertData(_connectionString);
 
         return true;
       }
@@ -50,6 +56,44 @@ namespace ApiSikkerhedsProjekt.Security
         _logger.LogError(e, "CheckIfTableExistsIfNotCreate has run into a problem");
         return false;
       }
+    }
+
+    private async void InsertData(string connectionString)
+    {
+      try
+      {
+        if (await CheckIfTableContainsValues(connectionString)) return;
+
+        var guid = new Guid();
+        var query = @$"INSERT INTO Security (APIKEY, APISECRET)
+                      VALUES ('Test', @{nameof(guid)})";
+
+        await using var conn = new SQLiteConnection(connectionString);
+        conn.Open();
+        await conn.ExecuteNonQueryAsync(query, new
+        {
+          guid
+        });
+        conn.Close();
+      }
+      catch (Exception e)
+      {
+        _logger.LogCritical(e, "InsertData failed in inserting into Security");
+        throw;
+      }
+    }
+
+    private async Task<bool> CheckIfTableContainsValues(string connectionString)
+    {
+      await using var conn = new SQLiteConnection(connectionString);
+      conn.Open();
+      var result = await conn.ExecuteQueryAsync<object>("SELECT * FROM Security");
+      conn.Close();
+      if (result.Any())
+      {
+        return true;
+      }
+      return false;
     }
   }
 }

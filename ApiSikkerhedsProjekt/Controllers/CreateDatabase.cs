@@ -1,5 +1,8 @@
 using System.Data.SQLite;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
+using RepoDb;
 
 namespace ApiSikkerhedsProjekt.Controllers
 {
@@ -15,41 +18,53 @@ namespace ApiSikkerhedsProjekt.Controllers
       _logger = logger;
     }
 
-    [HttpGet(Name = "CreateDatabase")]
+    [HttpGet(Name = "CreateDatabaseAndPopulate")]
     public void Get()
     {
       var connectionString = "Data Source=mydatabase.db;";
+      CreateTables(connectionString);
+      InsertData(connectionString);
 
-      var query = "CREATE TABLE person (id INTEGER PRIMARY KEY, name TEXT)";
-
-      using var conn = new SQLiteConnection(connectionString);
-      conn.Open();
-      using var command = new SQLiteCommand(query, conn);
-
-      command.ExecuteNonQuery();
-      conn.Close();
     }
 
-    private bool InsertData(string connectionString)
+    private void InsertData(string connectionString)
     {
       try
       {
         var guid = new Guid();
-        var query = @$"INSERT INTO Security (API-KEY, API-SECRET)
-                      VALUES ('Test', '{guid}')";
+        var query = @$"INSERT INTO Security (APIKEY, APISECRET)
+                      VALUES ('Test', '@{nameof(guid)}')";
 
         using var conn = new SQLiteConnection(connectionString);
         conn.Open();
-        using var command = new SQLiteCommand(query, conn);
-
-        command.ExecuteNonQuery();
+        conn.ExecuteNonQuery(query, new
+        {
+          guid
+        });
         conn.Close();
-        return true;
       }
       catch (Exception e)
       {
-        Console.WriteLine(e);
-        return false;
+        _logger.LogCritical(e, "InsertData failed in inserting into Security");
+        throw;
+      }
+    }
+
+    private void CreateTables(string connectionString)
+    {
+      try
+      {
+        var query = "CREATE TABLE IF NOT EXISTS Security (id INTEGER PRIMARY KEY, APIKEY TEXT, APISECRET uniqueidentifier)";
+
+        using var conn = new SQLiteConnection(connectionString);
+        conn.Open();
+        conn.ExecuteNonQuery(query);
+        conn.Close();
+      }
+      catch (Exception e)
+      {
+        _logger.LogCritical(e, "CreateTables failed in creating Security");
+        throw;
       }
     }
   }
