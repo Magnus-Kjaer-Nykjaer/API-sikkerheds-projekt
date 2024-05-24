@@ -1,9 +1,9 @@
 using ApiSikkerhedsProjekt.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ApiSikkerhedsProjekt.Controllers
 {
-  [ApiController]
   [Route("[controller]")]
   public class WeatherForecastController : ControllerBase
   {

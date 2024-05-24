@@ -1,13 +1,28 @@
+using System.Threading.RateLimiting;
 using ApiSikkerhedsProjekt.Security;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 using RepoDb;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.Configure<RateLimitingOptions>(
+  builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit));
+
+var rateLimitingOptions = new RateLimitingOptions();
+builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit).Bind(rateLimitingOptions);
+
+builder.Services.AddRateLimiter(_ => _
+  .AddFixedWindowLimiter(policyName: rateLimitingOptions.Policy, options =>
+  {
+    options.PermitLimit = rateLimitingOptions.PermitLimit;
+    options.Window = TimeSpan.FromSeconds(rateLimitingOptions.Window);
+    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    options.QueueLimit = rateLimitingOptions.QueueLimit;
+  }));
 
 //Registration of SecurityMiddleware
 builder.Services.AddTransient<SecurityMiddleware>();
@@ -47,15 +62,13 @@ builder.Services.AddSwaggerGen(c =>
 
 WebApplication app = builder.Build();
 
-app.UseMiddleware<SecurityMiddleware>();
+//app.Map("/", (HttpRequest request, HeaderSecurity headerSec) =>
+//{
+//  Microsoft.Extensions.Primitives.StringValues accept = request.Headers.Accept = "application/json";
+//  IHeaderDictionary customHeader = headerSec.HeaderVerification(request).Headers;
 
-app.Map("/", (HttpRequest request, HeaderSecurity headerSec) =>
-{
-  Microsoft.Extensions.Primitives.StringValues accept = request.Headers.Accept = "application/json";
-  IHeaderDictionary customHeader = headerSec.HeaderVerification(request).Headers;
-
-  return Results.Ok(new { accept, customHeader });
-});
+//  return Results.Ok(new { accept, customHeader });
+//});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -67,35 +80,19 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-  app.UseExceptionHandler(exceptionHandlerApp =>
-  {
-    exceptionHandlerApp.Run(async context =>
-    {
-      context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-      await context.Response.WriteAsync("An exception was thrown.");
-
-      IExceptionHandlerPathFeature? exceptionHandlerPathFeature =
-        context.Features.Get<IExceptionHandlerPathFeature>();
-
-      if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
-      {
-        await context.Response.WriteAsync(" The file was not found.");
-      }
-
-      if (exceptionHandlerPathFeature?.Path == "/")
-      {
-        await context.Response.WriteAsync(" Page: Home.");
-      }
-    });
-  });
+  app.UseExceptionHandler("/Error"); 
+  app.UseHsts();
 }
+app.UseRouting();
+app.UseRateLimiter();
+
+app.UseMiddleware<SecurityMiddleware>();
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting(rateLimitingOptions.Policy);
 
 GlobalConfiguration
   .Setup()
