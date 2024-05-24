@@ -3,6 +3,7 @@ using ApiSikkerhedsProjekt.Security;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 using RepoDb;
+using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,18 @@ builder.Services.AddTransient<SecurityMiddleware>();
 builder.Services.AddTransient<DatabaseHelperForSecurity>();
 
 builder.Services.AddScoped<HeaderSecurity>();
+
+//Registration of Logging
+Log.Logger = new LoggerConfiguration()
+  .Enrich.FromLogContext()
+  .WriteTo.Console(
+    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}")
+  .WriteTo.File($@"C:\log.txt",
+    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext:l}) {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}")
+  .CreateLogger();
+
+builder.Services.AddLogging(loggingBuilder =>
+  loggingBuilder.AddSerilog(dispose: true));
 
 // Makes sure that API key and secret has to be on all endpoints in swagger
 builder.Services.AddSwaggerGen(c =>
@@ -80,7 +93,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-  app.UseExceptionHandler("/Error"); 
+  app.UseExceptionHandler("/Error");
   app.UseHsts();
 }
 app.UseRouting();
