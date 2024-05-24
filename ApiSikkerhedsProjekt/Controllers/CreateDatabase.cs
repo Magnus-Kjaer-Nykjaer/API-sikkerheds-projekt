@@ -1,8 +1,6 @@
-using System.Data.SQLite;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using RepoDb;
+using System.Data.SQLite;
 
 namespace ApiSikkerhedsProjekt.Controllers
 {
@@ -21,7 +19,7 @@ namespace ApiSikkerhedsProjekt.Controllers
     [HttpGet(Name = "CreateDatabaseAndPopulate")]
     public void Get()
     {
-      var connectionString = "Data Source=mydatabase.db;";
+      string connectionString = "Data Source=mydatabase.db;";
       CreateTables(connectionString);
       InsertData(connectionString);
 
@@ -31,11 +29,11 @@ namespace ApiSikkerhedsProjekt.Controllers
     {
       try
       {
-        var guid = new Guid();
-        var query = @$"INSERT INTO Security (APIKEY, APISECRET)
+        Guid guid = new Guid();
+        string query = @$"INSERT INTO Security (APIKEY, APISECRET)
                       VALUES ('Test', '@{nameof(guid)}')";
 
-        using var conn = new SQLiteConnection(connectionString);
+        using SQLiteConnection conn = new SQLiteConnection(connectionString);
         conn.Open();
         conn.ExecuteNonQuery(query, new
         {
@@ -54,9 +52,9 @@ namespace ApiSikkerhedsProjekt.Controllers
     {
       try
       {
-        var query = "CREATE TABLE IF NOT EXISTS Security (id INTEGER PRIMARY KEY, APIKEY TEXT, APISECRET uniqueidentifier)";
+        string query = "CREATE TABLE IF NOT EXISTS Security (id INTEGER PRIMARY KEY, APIKEY TEXT, APISECRET uniqueidentifier)";
 
-        using var conn = new SQLiteConnection(connectionString);
+        using SQLiteConnection conn = new SQLiteConnection(connectionString);
         conn.Open();
         conn.ExecuteNonQuery(query);
         conn.Close();

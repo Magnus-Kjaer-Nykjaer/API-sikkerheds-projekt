@@ -1,8 +1,5 @@
-﻿using System;
+﻿using RepoDb;
 using System.Data.SQLite;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.DataProtection;
-using RepoDb;
 
 namespace ApiSikkerhedsProjekt.Security
 {
@@ -21,13 +18,13 @@ namespace ApiSikkerhedsProjekt.Security
     {
       if (!await CheckIfTableExistsIfNotCreate()) return false;
 
-      var query = @$"SELECT * FROM Security 
+      string query = @$"SELECT * FROM Security 
                       WHERE APIKEY = @{nameof(key)} 
                       AND APISECRET = @{nameof(secret)} ";
 
-      using var conn = new SQLiteConnection(_connectionString);
+      using SQLiteConnection conn = new SQLiteConnection(_connectionString);
       conn.Open();
-      var result = await conn.ExecuteQueryAsync<object>(query, new
+      IEnumerable<object> result = await conn.ExecuteQueryAsync<object>(query, new
       {
         key,
         secret
@@ -40,11 +37,11 @@ namespace ApiSikkerhedsProjekt.Security
     {
       try
       {
-        var query = "CREATE TABLE IF NOT EXISTS Security (id INTEGER PRIMARY KEY, APIKEY TEXT, APISECRET uniqueidentifier)";
+        string query = "CREATE TABLE IF NOT EXISTS Security (id INTEGER PRIMARY KEY NOT NULL, APIKEY TEXT NOT NULL, APISECRET TEXT NOT NULL)";
 
-        await using var conn = new SQLiteConnection(_connectionString);
+        await using SQLiteConnection conn = new SQLiteConnection(_connectionString);
         conn.Open();
-        var res = await conn.ExecuteNonQueryAsync(query);
+        int res = await conn.ExecuteNonQueryAsync(query);
         conn.Close();
 
         InsertData(_connectionString);
@@ -64,11 +61,11 @@ namespace ApiSikkerhedsProjekt.Security
       {
         if (await CheckIfTableContainsValues(connectionString)) return;
 
-        var guid = new Guid();
-        var query = @$"INSERT INTO Security (APIKEY, APISECRET)
+        string guid = Guid.NewGuid().ToString();
+        string query = @$"INSERT INTO Security (APIKEY, APISECRET)
                       VALUES ('Test', @{nameof(guid)})";
 
-        await using var conn = new SQLiteConnection(connectionString);
+        await using SQLiteConnection conn = new SQLiteConnection(connectionString);
         conn.Open();
         await conn.ExecuteNonQueryAsync(query, new
         {
@@ -85,9 +82,9 @@ namespace ApiSikkerhedsProjekt.Security
 
     private async Task<bool> CheckIfTableContainsValues(string connectionString)
     {
-      await using var conn = new SQLiteConnection(connectionString);
+      await using SQLiteConnection conn = new SQLiteConnection(connectionString);
       conn.Open();
-      var result = await conn.ExecuteQueryAsync<object>("SELECT * FROM Security");
+      IEnumerable<object> result = await conn.ExecuteQueryAsync<object>("SELECT * FROM Security");
       conn.Close();
       if (result.Any())
       {

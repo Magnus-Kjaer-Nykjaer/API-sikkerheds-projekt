@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using RepoDb;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(c =>
     In = ParameterLocation.Header,
     Scheme = "ApiKeyScheme"
   });
-  var key = new OpenApiSecurityScheme()
+  OpenApiSecurityScheme key = new OpenApiSecurityScheme()
   {
     Reference = new OpenApiReference
     {
@@ -36,7 +36,7 @@ builder.Services.AddSwaggerGen(c =>
     },
     In = ParameterLocation.Header
   };
-  var requirement = new OpenApiSecurityRequirement
+  OpenApiSecurityRequirement requirement = new OpenApiSecurityRequirement
   {
     { key, new List<string>() }
   };
@@ -45,14 +45,14 @@ builder.Services.AddSwaggerGen(c =>
   c.OperationFilter<SecretFilter>();
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.UseMiddleware<SecurityMiddleware>();
 
 app.Map("/", (HttpRequest request, HeaderSecurity headerSec) =>
 {
-  var accept = request.Headers.Accept = "application/json";
-  var customHeader = headerSec.HeaderVerification(request).Headers;
+  Microsoft.Extensions.Primitives.StringValues accept = request.Headers.Accept = "application/json";
+  IHeaderDictionary customHeader = headerSec.HeaderVerification(request).Headers;
 
   return Results.Ok(new { accept, customHeader });
 });
@@ -75,7 +75,7 @@ else
 
       await context.Response.WriteAsync("An exception was thrown.");
 
-      var exceptionHandlerPathFeature =
+      IExceptionHandlerPathFeature? exceptionHandlerPathFeature =
         context.Features.Get<IExceptionHandlerPathFeature>();
 
       if (exceptionHandlerPathFeature?.Error is FileNotFoundException)

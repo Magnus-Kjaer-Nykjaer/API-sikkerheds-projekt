@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace ApiSikkerhedsProjekt.Security
+﻿namespace ApiSikkerhedsProjekt.Security
 {
   public class HeaderSecurity
   {
@@ -19,9 +17,9 @@ namespace ApiSikkerhedsProjekt.Security
 
         httpRequest.Headers.XXSSProtection = "0";
         httpRequest.Headers.XContentTypeOptions = "nosniff";
-        httpRequest.Headers.XFrameOptions= "deny";
-        httpRequest.Headers.CacheControl= "no-store";
-        httpRequest.Headers.ContentSecurityPolicy= "default-src 'none'; frame-ancestors 'none'; sandbox";
+        httpRequest.Headers.XFrameOptions = "deny";
+        httpRequest.Headers.CacheControl = "no-store";
+        httpRequest.Headers.ContentSecurityPolicy = "default-src 'none'; frame-ancestors 'none'; sandbox";
 
         return httpRequest;
       }

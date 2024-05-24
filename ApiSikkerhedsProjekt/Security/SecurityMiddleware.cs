@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace ApiSikkerhedsProjekt.Security
+﻿namespace ApiSikkerhedsProjekt.Security
 {
   public class SecurityMiddleware : IMiddleware
   {
@@ -16,7 +14,7 @@ namespace ApiSikkerhedsProjekt.Security
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-      var controller = context.Request.Path.Value?
+      string controller = context.Request.Path.Value?
         .ToLower()
         .Split(_separator as char[], StringSplitOptions.RemoveEmptyEntries)
         .FirstOrDefault() ?? string.Empty;
@@ -52,14 +50,14 @@ namespace ApiSikkerhedsProjekt.Security
     {
       try
       {
-        var key = string.Empty;
-        var secret = string.Empty;
-        if (request.Headers.TryGetValue("api-key", out var keys))
+        string? key = string.Empty;
+        string? secret = string.Empty;
+        if (request.Headers.TryGetValue("api-key", out Microsoft.Extensions.Primitives.StringValues keys))
         {
           key = keys.FirstOrDefault();
         }
 
-        if (request.Headers.TryGetValue("api-secret", out var secrets))
+        if (request.Headers.TryGetValue("api-secret", out Microsoft.Extensions.Primitives.StringValues secrets))
         {
           secret = secrets.FirstOrDefault();
         }
@@ -70,7 +68,7 @@ namespace ApiSikkerhedsProjekt.Security
             key ?? "NoKeyFound", secret ?? "NoSecretFound");
           return false;
         }
-        var test = await _apiSecurityHelper.ValidateKeySecret(key, secret);
+        bool test = await _apiSecurityHelper.ValidateKeySecret(key, secret);
         return test;
       }
       catch (Exception e)
