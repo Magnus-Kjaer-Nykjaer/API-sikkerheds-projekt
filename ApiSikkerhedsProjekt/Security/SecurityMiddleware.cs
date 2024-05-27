@@ -5,11 +5,13 @@
     private readonly ILogger<SecurityMiddleware> _logger;
     private static readonly Array _separator = new[] { '/' };
     private readonly DatabaseHelperForSecurity _apiSecurityHelper;
+    private readonly HeaderSecurity _headerSecurity;
 
-    public SecurityMiddleware(ILogger<SecurityMiddleware> logger, DatabaseHelperForSecurity apiSecurityHelper)
+    public SecurityMiddleware(ILogger<SecurityMiddleware> logger, DatabaseHelperForSecurity apiSecurityHelper, HeaderSecurity headerSecurity)
     {
       _logger = logger;
       _apiSecurityHelper = apiSecurityHelper;
+      _headerSecurity = headerSecurity;
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -25,8 +27,9 @@
         return;
       }
 
-      //var headerVerification = await _headerSecurity.HeaderVerification(context.Request);
-      //context.Request = headerVerification;
+      var headerSanitization = _headerSecurity.HeaderSanitization(context.Response);
+      foreach (var headerPair in headerSanitization.Headers) 
+        context.Response.Headers.TryAdd(headerPair.Key, headerPair.Value);
 
       if (!controller.StartsWith("swagger"))
       {

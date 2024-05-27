@@ -30,7 +30,7 @@
       }
     }
 
-    public async Task<HttpResponse> HeaderSanitization(HttpResponse httpResponse)
+    public HttpResponse HeaderSanitization(HttpResponse httpResponse)
     {
       try
       {

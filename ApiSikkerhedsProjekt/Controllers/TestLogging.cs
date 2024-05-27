@@ -5,9 +5,10 @@ namespace ApiSikkerhedsProjekt.Controllers
   public class TestLogging(ILogger<TestLogging> logger) : ControllerBase
   {
     [HttpGet(Name = "TestLogging")]
-    public void Get()
+    public string Get(string test)
     {
       logger.LogInformation("Logging works");
+      return "Logging works";
     }
   }
 }

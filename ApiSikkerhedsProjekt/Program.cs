@@ -75,13 +75,12 @@ builder.Services.AddSwaggerGen(c =>
 
 WebApplication app = builder.Build();
 
-//app.Map("/", (HttpRequest request, HeaderSecurity headerSec) =>
-//{
-//  Microsoft.Extensions.Primitives.StringValues accept = request.Headers.Accept = "application/json";
-//  IHeaderDictionary customHeader = headerSec.HeaderVerification(request).Headers;
+app.Map("/*", (HttpResponse response, HeaderSecurity headerSec) =>
+{
+  var customHeader = headerSec.HeaderSanitization(response);
 
-//  return Results.Ok(new { accept, customHeader });
-//});
+  return Results.Ok(new { customHeader });
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
