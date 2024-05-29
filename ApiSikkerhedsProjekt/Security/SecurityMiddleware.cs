@@ -23,7 +23,8 @@
 
       if (!context.Request.IsHttps)
       {
-        context.Abort();
+        context.Response.Clear();
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
         return;
       }
 
@@ -35,7 +36,8 @@
       {
         if (context.Request.Headers.ContentType != "application/json")
         {
-          context.Abort();
+          context.Response.Clear();
+          context.Response.StatusCode = StatusCodes.Status400BadRequest;
           return;
         }
         if (!await ValidateCredentials(context.Request))

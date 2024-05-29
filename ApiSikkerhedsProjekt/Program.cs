@@ -25,6 +25,23 @@ builder.Services.AddRateLimiter(_ => _
     options.QueueLimit = rateLimitingOptions.QueueLimit;
   }));
 
+builder.Services.AddHsts(options =>
+{
+  options.Preload = true;
+  options.IncludeSubDomains = true;
+  options.MaxAge = TimeSpan.FromDays(60);
+
+});
+
+if (!builder.Environment.IsDevelopment())
+{
+  builder.Services.AddHttpsRedirection(options =>
+  {
+    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+    options.HttpsPort = 443;
+  });
+}
+
 //Registration of SecurityMiddleware
 builder.Services.AddTransient<SecurityMiddleware>();
 builder.Services.AddTransient<DatabaseHelperForSecurity>();
@@ -95,12 +112,12 @@ else
   app.UseExceptionHandler("/Error");
   app.UseHsts();
 }
+app.UseHttpsRedirection();
+
 app.UseRouting();
 app.UseRateLimiter();
 
 app.UseMiddleware<SecurityMiddleware>();
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
