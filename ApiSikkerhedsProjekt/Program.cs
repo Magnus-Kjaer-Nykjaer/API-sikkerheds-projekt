@@ -92,6 +92,8 @@ builder.Services.AddSwaggerGen(c =>
 
 WebApplication app = builder.Build();
 
+app.MapControllers().RequireRateLimiting(rateLimitingOptions.Policy);
+
 app.Map("/*", (HttpResponse response, HeaderSecurity headerSec) =>
 {
   var customHeader = headerSec.HeaderSanitization(response);
@@ -120,8 +122,6 @@ app.UseRateLimiter();
 app.UseMiddleware<SecurityMiddleware>();
 
 app.UseAuthorization();
-
-app.MapControllers().RequireRateLimiting(rateLimitingOptions.Policy);
 
 GlobalConfiguration
   .Setup()
