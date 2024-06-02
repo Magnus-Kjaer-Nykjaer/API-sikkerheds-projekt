@@ -92,6 +92,9 @@ builder.Services.AddSwaggerGen(c =>
 
 WebApplication app = builder.Build();
 
+app.UseRouting();
+app.UseRateLimiter();
+
 app.MapControllers().RequireRateLimiting(rateLimitingOptions.Policy);
 
 app.Map("/*", (HttpResponse response, HeaderSecurity headerSec) =>
@@ -115,9 +118,6 @@ else
   app.UseHsts();
 }
 app.UseHttpsRedirection();
-
-app.UseRouting();
-app.UseRateLimiter();
 
 app.UseMiddleware<SecurityMiddleware>();
 
