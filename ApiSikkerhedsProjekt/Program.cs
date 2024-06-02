@@ -10,21 +10,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.Configure<RateLimitingOptions>(
-  builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit));
-
-var rateLimitingOptions = new RateLimitingOptions();
-builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit).Bind(rateLimitingOptions);
-
-builder.Services.AddRateLimiter(_ => _
-  .AddFixedWindowLimiter(policyName: rateLimitingOptions.Policy, options =>
-  {
-    options.PermitLimit = rateLimitingOptions.PermitLimit;
-    options.Window = TimeSpan.FromSeconds(rateLimitingOptions.Window);
-    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-    options.QueueLimit = rateLimitingOptions.QueueLimit;
-  }));
-
 builder.Services.AddHsts(options =>
 {
   options.Preload = true;
@@ -41,6 +26,21 @@ if (!builder.Environment.IsDevelopment())
     options.HttpsPort = 443;
   });
 }
+
+builder.Services.Configure<RateLimitingOptions>(
+  builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit));
+
+var rateLimitingOptions = new RateLimitingOptions();
+builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit).Bind(rateLimitingOptions);
+
+builder.Services.AddRateLimiter(_ => _
+  .AddFixedWindowLimiter(policyName: rateLimitingOptions.Policy, options =>
+  {
+    options.PermitLimit = rateLimitingOptions.PermitLimit;
+    options.Window = TimeSpan.FromSeconds(rateLimitingOptions.Window);
+    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    options.QueueLimit = rateLimitingOptions.QueueLimit;
+  }));
 
 //Registration of SecurityMiddleware
 builder.Services.AddTransient<SecurityMiddleware>();
