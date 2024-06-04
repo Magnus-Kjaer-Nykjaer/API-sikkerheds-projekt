@@ -48,7 +48,7 @@ namespace ApiSikkerhedsProjekt.DatabaseCreation
 
         await using SQLiteConnection conn = new SQLiteConnection(connectionString);
         conn.Open();
-        for (int id = 1; id < 10; id++)
+        for (int id = 1; id < 15; id++)
         {
           renterId = id;
           name += id;

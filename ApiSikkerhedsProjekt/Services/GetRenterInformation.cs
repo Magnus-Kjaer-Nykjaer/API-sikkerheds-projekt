@@ -13,7 +13,10 @@ namespace ApiSikkerhedsProjekt.Services
       try
       {
         if (!await accesController.CheckAccessToRenter(apiKey, renterId))
+        {
+          logger.LogWarning("API-Key {apikey} does not have access to the renter with the id {renterId}", apiKey, renterId );
           return Result.Fail("You do not have access to this renters information");
+        }
 
         string query = @$"SELECT * FROM Renter where RenterId = @{nameof(renterId)}";
 
@@ -30,14 +33,7 @@ namespace ApiSikkerhedsProjekt.Services
         if (renterModels.Any())
           return renterModels.First();
 
-        return new RenterModel
-        {
-          RenterId = 0,
-          ApartmentId = 0,
-          ApartmentComplexId = 0,
-          Name = "",
-          Address = ""
-        };
+        return Result.Fail($"No renter found with the given RenterId");
       }
       catch (Exception e)
       {
