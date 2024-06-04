@@ -13,8 +13,6 @@
     {
       try
       {
-        //httpRequest.Headers.ContentType = "application/json";
-
         httpRequest.Headers.XXSSProtection = "0";
         httpRequest.Headers.XContentTypeOptions = "nosniff";
         httpRequest.Headers.XFrameOptions = "deny";

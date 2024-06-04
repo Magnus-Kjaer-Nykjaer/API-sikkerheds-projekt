@@ -1,17 +1,21 @@
-﻿namespace ApiSikkerhedsProjekt.Security
+﻿using ApiSikkerhedsProjekt.DatabaseCreation;
+
+namespace ApiSikkerhedsProjekt.Security
 {
   public class SecurityMiddleware : IMiddleware
   {
     private readonly ILogger<SecurityMiddleware> _logger;
     private static readonly Array _separator = new[] { '/' };
     private readonly DatabaseHelperForSecurity _apiSecurityHelper;
+    private readonly DatabaseHelperForRenter _databaseHelperForRenter;
     private readonly HeaderSecurity _headerSecurity;
 
-    public SecurityMiddleware(ILogger<SecurityMiddleware> logger, DatabaseHelperForSecurity apiSecurityHelper, HeaderSecurity headerSecurity)
+    public SecurityMiddleware(ILogger<SecurityMiddleware> logger, DatabaseHelperForSecurity apiSecurityHelper, HeaderSecurity headerSecurity, DatabaseHelperForRenter databaseHelperForRenter)
     {
       _logger = logger;
       _apiSecurityHelper = apiSecurityHelper;
       _headerSecurity = headerSecurity;
+      _databaseHelperForRenter = databaseHelperForRenter;
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -21,6 +25,8 @@
         .Split(_separator as char[], StringSplitOptions.RemoveEmptyEntries)
         .FirstOrDefault() ?? string.Empty;
 
+      await CreateTabels();
+
       if (!context.Request.IsHttps)
       {
         context.Response.Clear();
@@ -29,7 +35,7 @@
       }
 
       var headerSanitization = _headerSecurity.HeaderSanitization(context.Response);
-      foreach (var headerPair in headerSanitization.Headers) 
+      foreach (var headerPair in headerSanitization.Headers)
         context.Response.Headers.TryAdd(headerPair.Key, headerPair.Value);
 
       if (!controller.StartsWith("swagger"))
@@ -49,6 +55,22 @@
         }
       }
       await next(context);
+    }
+
+    private async Task CreateTabels()
+    {
+      try
+      {
+        if (await _databaseHelperForRenter.CheckIfTableExistsIfNotCreate())
+        {
+          return;
+        }
+        _logger.LogError("CreateTabels failed in Creating the tabels");
+      }
+      catch (Exception e)
+      {
+        _logger.LogCritical(e, "CreateTabels failed in Creating the tabels");
+      }
     }
 
     private async Task<bool> ValidateCredentials(HttpRequest request)

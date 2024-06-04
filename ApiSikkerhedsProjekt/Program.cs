@@ -1,4 +1,5 @@
 using System.Threading.RateLimiting;
+using ApiSikkerhedsProjekt.DatabaseCreation;
 using ApiSikkerhedsProjekt.Security;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;

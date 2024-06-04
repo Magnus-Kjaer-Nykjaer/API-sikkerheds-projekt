@@ -1,7 +1,7 @@
 ﻿using RepoDb;
 using System.Data.SQLite;
 
-namespace ApiSikkerhedsProjekt.Security
+namespace ApiSikkerhedsProjekt.DatabaseCreation
 {
   public class DatabaseHelperForSecurity
   {
@@ -22,7 +22,7 @@ namespace ApiSikkerhedsProjekt.Security
                       WHERE APIKEY = @{nameof(key)} 
                       AND APISECRET = @{nameof(secret)} ";
 
-      using SQLiteConnection conn = new SQLiteConnection(_connectionString);
+      await using SQLiteConnection conn = new SQLiteConnection(_connectionString);
       conn.Open();
       IEnumerable<object> result = await conn.ExecuteQueryAsync<object>(query, new
       {
@@ -44,7 +44,7 @@ namespace ApiSikkerhedsProjekt.Security
         int res = await conn.ExecuteNonQueryAsync(query);
         conn.Close();
 
-        InsertData(_connectionString);
+        InsertIntoSecurity(_connectionString);
 
         return true;
       }
@@ -55,7 +55,7 @@ namespace ApiSikkerhedsProjekt.Security
       }
     }
 
-    private async void InsertData(string connectionString)
+    private async void InsertIntoSecurity(string connectionString)
     {
       try
       {
