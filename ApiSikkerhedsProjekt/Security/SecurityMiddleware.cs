@@ -34,8 +34,8 @@ namespace ApiSikkerhedsProjekt.Security
         return;
       }
 
-      var headerSanitization = _headerSecurity.HeaderSanitization(context.Response);
-      foreach (var headerPair in headerSanitization.Headers)
+      HttpResponse headerSanitization = _headerSecurity.HeaderSanitization(context.Response);
+      foreach (KeyValuePair<string, Microsoft.Extensions.Primitives.StringValues> headerPair in headerSanitization.Headers)
         context.Response.Headers.TryAdd(headerPair.Key, headerPair.Value);
 
       if (!controller.StartsWith("swagger"))

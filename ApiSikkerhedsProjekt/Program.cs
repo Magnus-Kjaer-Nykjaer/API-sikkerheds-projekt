@@ -1,10 +1,11 @@
-using System.Threading.RateLimiting;
 using ApiSikkerhedsProjekt.DatabaseCreation;
 using ApiSikkerhedsProjekt.Security;
+using ApiSikkerhedsProjekt.Services;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.OpenApi.Models;
 using RepoDb;
 using Serilog;
+using System.Threading.RateLimiting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ if (!builder.Environment.IsDevelopment())
 builder.Services.Configure<RateLimitingOptions>(
   builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit));
 
-var rateLimitingOptions = new RateLimitingOptions();
+RateLimitingOptions rateLimitingOptions = new RateLimitingOptions();
 builder.Configuration.GetSection(RateLimitingOptions.MyRateLimit).Bind(rateLimitingOptions);
 
 builder.Services.AddRateLimiter(_ => _
@@ -90,7 +91,10 @@ builder.Services.AddSwaggerGen(c =>
   c.OperationFilter<KeyFilter>();
   c.OperationFilter<SecretFilter>();
 });
-
+builder.Services.AddScoped<IGetRenterInformation, GetRenterInformation>();
+builder.Services.AddTransient<DatabaseHelperForAccessControl>();
+builder.Services.AddTransient<DatabaseHelperForRenter>();
+builder.Services.AddTransient<AccesController>();
 WebApplication app = builder.Build();
 
 app.UseRouting();
@@ -100,7 +104,7 @@ app.MapControllers().RequireRateLimiting(rateLimitingOptions.Policy);
 
 app.Map("/*", (HttpResponse response, HeaderSecurity headerSec) =>
 {
-  var customHeader = headerSec.HeaderSanitization(response);
+  HttpResponse customHeader = headerSec.HeaderSanitization(response);
 
   return Results.Ok(new { customHeader });
 });

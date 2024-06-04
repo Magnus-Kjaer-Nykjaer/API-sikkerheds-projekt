@@ -1,5 +1,5 @@
-﻿using System.Data.SQLite;
-using RepoDb;
+﻿using RepoDb;
+using System.Data.SQLite;
 
 namespace ApiSikkerhedsProjekt.DatabaseCreation
 {
@@ -11,7 +11,7 @@ namespace ApiSikkerhedsProjekt.DatabaseCreation
     {
       if (!await CheckIfTableExistsIfNotCreate()) return false;
 
-      string query = @$"SELECT * FROM AccessControl 
+      string query = @$"SELECT id FROM AccessControl 
                       WHERE APIKEY = @{nameof(key)} 
                       AND RenterId = @{nameof(renterId)} ";
 

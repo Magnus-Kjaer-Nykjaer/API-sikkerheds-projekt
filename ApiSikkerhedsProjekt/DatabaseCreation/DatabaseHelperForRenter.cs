@@ -1,6 +1,5 @@
-﻿using System;
+﻿using RepoDb;
 using System.Data.SQLite;
-using RepoDb;
 
 namespace ApiSikkerhedsProjekt.DatabaseCreation
 {
@@ -43,17 +42,20 @@ namespace ApiSikkerhedsProjekt.DatabaseCreation
       {
         if (await CheckIfTableContainsValues(connectionString)) return;
         int renterId;
+        string name = "GDPRSEN ";
         string query = @$"INSERT INTO Renter (RenterId, ApartmentId, ApartmentComplexId, Name, Address)
-                      VALUES (@{nameof(renterId)},1,1,'GDPRSEN @{nameof(renterId)}','Seebladsgade 1')";
+                      VALUES (@{nameof(renterId)},1,1,@{nameof(name)},'Seebladsgade 1')";
 
         await using SQLiteConnection conn = new SQLiteConnection(connectionString);
         conn.Open();
         for (int id = 1; id < 10; id++)
         {
           renterId = id;
+          name += id;
           await conn.ExecuteNonQueryAsync(query, new
           {
-            renterId
+            renterId,
+            name
           });
 
         }
