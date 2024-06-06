@@ -97,9 +97,9 @@ app.UseRateLimiter();
 
 app.MapControllers().RequireRateLimiting(rateLimitingOptions.Policy);
 
-app.Map("/*", (HttpResponse response, HeaderSecurity headerSec) =>
+app.Map("/*", (HttpRequest request, HeaderSecurity headerSec) =>
 {
-  var customHeader = headerSec.HeaderSanitization(response);
+  var customHeader = headerSec.HeaderVerification(request);
 
   return Results.Ok(new { customHeader });
 });
