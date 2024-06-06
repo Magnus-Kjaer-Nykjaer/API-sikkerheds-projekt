@@ -3,7 +3,7 @@
   public class RateLimitingOptions
   {
     public const string MyRateLimit = "MyRateLimit";
-    public string Policy { get; set; }  = "fixed";
+    public string Policy { get; set; } = "fixed";
     public int PermitLimit { get; set; } = 4; //Request limit
     public int Window { get; set; } = 10; //Seconds
     public int ReplenishmentPeriod { get; set; } = 2;
