@@ -1,0 +1,46 @@
+[13:16:39 INF] (Microsoft.Hosting.Lifetime) Now listening on: https://localhost:7184
+ {"EventId":{"Id":14,"Name":"ListeningOnAddress"}}
+[13:16:39 INF] (Microsoft.Hosting.Lifetime) Now listening on: http://localhost:5086
+ {"EventId":{"Id":14,"Name":"ListeningOnAddress"}}
+[13:16:39 INF] (Microsoft.Hosting.Lifetime) Application started. Press Ctrl+C to shut down.
+ {}
+[13:16:39 INF] (Microsoft.Hosting.Lifetime) Hosting environment: Development
+ {}
+[13:16:39 INF] (Microsoft.Hosting.Lifetime) Content root path: C:\UDV\Skole\API-sikkerheds-projekt\ApiSikkerhedsProjekt
+ {}
+[13:16:40 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request starting HTTP/2 GET https://localhost:7184/swagger/index.html - null null
+ {"EventId":{"Id":1},"RequestId":"0HN46SD6L60ID:00000001","RequestPath":"/swagger/index.html","ConnectionId":"0HN46SD6L60ID"}
+[13:16:40 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request starting HTTP/2 GET https://localhost:7184/_framework/aspnetcore-browser-refresh.js - null null
+ {"EventId":{"Id":1},"RequestId":"0HN46SD6L60ID:00000003","RequestPath":"/_framework/aspnetcore-browser-refresh.js","ConnectionId":"0HN46SD6L60ID"}
+[13:16:40 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request finished HTTP/2 GET https://localhost:7184/swagger/index.html - 200 null text/html;charset=utf-8 461.9596ms
+ {"EventId":{"Id":2},"RequestId":"0HN46SD6L60ID:00000001","RequestPath":"/swagger/index.html","ConnectionId":"0HN46SD6L60ID"}
+[13:16:40 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request finished HTTP/2 GET https://localhost:7184/_framework/aspnetcore-browser-refresh.js - 200 13776 application/javascript; charset=utf-8 24.0984ms
+ {"EventId":{"Id":2},"RequestId":"0HN46SD6L60ID:00000003","RequestPath":"/_framework/aspnetcore-browser-refresh.js","ConnectionId":"0HN46SD6L60ID"}
+[13:16:40 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request starting HTTP/2 GET https://localhost:7184/_vs/browserLink - null null
+ {"EventId":{"Id":1},"RequestId":"0HN46SD6L60ID:00000005","RequestPath":"/_vs/browserLink","ConnectionId":"0HN46SD6L60ID"}
+[13:16:40 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request finished HTTP/2 GET https://localhost:7184/_vs/browserLink - 200 null text/javascript; charset=UTF-8 85.7426ms
+ {"EventId":{"Id":2},"RequestId":"0HN46SD6L60ID:00000005","RequestPath":"/_vs/browserLink","ConnectionId":"0HN46SD6L60ID"}
+[13:16:41 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request starting HTTP/2 GET https://localhost:7184/swagger/v1/swagger.json - null null
+ {"EventId":{"Id":1},"RequestId":"0HN46SD6L60ID:00000007","RequestPath":"/swagger/v1/swagger.json","ConnectionId":"0HN46SD6L60ID"}
+[13:16:41 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request finished HTTP/2 GET https://localhost:7184/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 177.9513ms
+ {"EventId":{"Id":2},"RequestId":"0HN46SD6L60ID:00000007","RequestPath":"/swagger/v1/swagger.json","ConnectionId":"0HN46SD6L60ID"}
+[13:17:19 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request starting HTTP/2 GET https://localhost:7184/TestLogging - application/json null
+ {"EventId":{"Id":1},"RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Routing.EndpointMiddleware) Executing endpoint 'ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt)'
+ {"EventId":{"Name":"ExecutingEndpoint"},"RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker) Route matched with {action = "Get", controller = "TestLogging"}. Executing controller action with signature System.String Get(System.String) on controller ApiSikkerhedsProjekt.Controllers.TestLogging (ApiSikkerhedsProjekt).
+ {"EventId":{"Id":102,"Name":"ControllerActionExecuting"},"ActionId":"d52213ad-3ef5-4a24-85f9-86c30aed9a6f","ActionName":"ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt)","RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker) Executing action method ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt) - Validation state: "Invalid"
+ {"EventId":{"Id":101,"Name":"ActionMethodExecuting"},"ActionId":"d52213ad-3ef5-4a24-85f9-86c30aed9a6f","RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (ApiSikkerhedsProjekt.Controllers.TestLogging) Logging works
+ {"ActionId":"d52213ad-3ef5-4a24-85f9-86c30aed9a6f","ActionName":"ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt)","RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker) Executed action method ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt), returned result Microsoft.AspNetCore.Mvc.ObjectResult in 3.1884ms.
+ {"EventId":{"Id":103,"Name":"ActionMethodExecuted"},"ActionId":"d52213ad-3ef5-4a24-85f9-86c30aed9a6f","RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Mvc.Infrastructure.ObjectResultExecutor) Executing ObjectResult, writing value of type 'System.String'.
+ {"EventId":{"Id":1,"Name":"ObjectResultExecuting"},"ActionId":"d52213ad-3ef5-4a24-85f9-86c30aed9a6f","ActionName":"ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt)","RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker) Executed action ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt) in 71.7256ms
+ {"EventId":{"Id":105,"Name":"ActionExecuted"},"RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Routing.EndpointMiddleware) Executed endpoint 'ApiSikkerhedsProjekt.Controllers.TestLogging.Get (ApiSikkerhedsProjekt)'
+ {"EventId":{"Id":1,"Name":"ExecutedEndpoint"},"RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
+[13:17:19 INF] (Microsoft.AspNetCore.Hosting.Diagnostics) Request finished HTTP/2 GET https://localhost:7184/TestLogging - 200 null application/json; charset=utf-8 383.8104ms
+ {"EventId":{"Id":2},"RequestId":"0HN46SD6L60IE:00000001","RequestPath":"/TestLogging","ConnectionId":"0HN46SD6L60IE"}
