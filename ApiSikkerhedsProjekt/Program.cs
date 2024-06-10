@@ -55,7 +55,7 @@ Log.Logger = new LoggerConfiguration()
   .Enrich.FromLogContext()
   .WriteTo.Console(
     outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}")
-  .WriteTo.File($@"C:\log.txt",
+  .WriteTo.File(Path.Combine(Directory.GetCurrentDirectory() + @"\log.txt"),
     outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({SourceContext:l}) {Message:lj}{NewLine}{Exception} {Properties:j}{NewLine}")
   .CreateLogger();
 
