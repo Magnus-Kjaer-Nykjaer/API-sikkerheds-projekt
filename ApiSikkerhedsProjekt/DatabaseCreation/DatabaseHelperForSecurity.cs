@@ -61,7 +61,7 @@ namespace ApiSikkerhedsProjekt.DatabaseCreation
       {
         if (await CheckIfTableContainsValues(connectionString)) return;
 
-        string guid = Guid.NewGuid().ToString();
+        string guid = "e52bbe31-bf30-4fb4-84b0-8345c5812a31";
         string query = @$"INSERT INTO Security (APIKEY, APISECRET)
                       VALUES ('Test', @{nameof(guid)})";
 
