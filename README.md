@@ -6,11 +6,11 @@ Dette er et projekt jeg har lavet som en demo, til min bachelor i IT-sikkerhed.
 
 For at teste projektet af, er der to ting man kan vælge at gøre.
 
-1. Hent projektet ned fra Github og køre det via en IDE som visual studio.
+1. Hent projektet ned fra Github og køre det via en IDE som visual studio. Husk at kør det med HTTPS.
 
-2. Jeg har også lavet det som en docker container man kan hente ved at køre de fire neden stående kommandoer.
+2. Jeg har også lavet det som en docker container, man kan hente ved at køre de fire neden stående kommandoer.
 
-De første to dotnet kommandoer opretter et dev tls certifikat som vi kan bruge til at indsætte i vores docker container, så vi har mulighed for at køre min API med HTTPS.
+De første to dotnet kommandoer opretter et dev TLS certifikat, som vi skal bruge til at indsætte i vores docker container, så vi har mulighed for at køre min API med HTTPS.
 
 Kør disse i powershell:
 ```
@@ -31,6 +31,11 @@ API-Secret: e52bbe31-bf30-4fb4-84b0-8345c5812a31
 
 content-typen: application/json
 
+Der er tre endpoints som kan kaldes og de er som følger:
+
+/FejlTest
+/GetRenterInformation
+/TestLogging
 
 Eksempel curl kommando man kan køre i powershell, dette kal skulle gerne retunere en 400 bad request, som man så i sit andet powershell vindue, kan se at giver en log besked om at brugerne ikke har rettighed til dataen.
 ```
