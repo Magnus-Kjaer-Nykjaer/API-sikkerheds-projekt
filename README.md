@@ -8,7 +8,7 @@ For at teste projektet af, er der to ting man kan vælge at gøre.
 
 1. Hent projektet ned fra Github og køre det via en IDE som visual studio. Husk at kør det med HTTPS.
 
-2. Jeg har også lavet det som en docker container, man kan hente ved at køre de fire neden stående kommandoer.
+2. Jeg har også lavet det som en docker container, man kan hente ved at køre de fire neden stående kommandoer. Hvis man er interasseret er der et link til DockerHub reposeroriet her: https://hub.docker.com/repository/docker/skumbanan/apisikkerhedsprojekt/general 
 
 De første to dotnet kommandoer opretter et dev TLS certifikat, som vi skal bruge til at indsætte i vores docker container, så vi har mulighed for at køre min API med HTTPS.
 
@@ -34,7 +34,9 @@ content-typen: application/json
 Der er tre endpoints som kan kaldes og de er som følger:
 
 /FejlTest
+
 /GetRenterInformation
+
 /TestLogging
 
 Eksempel curl kommando man kan køre i powershell, dette kal skulle gerne retunere en 400 bad request, som man så i sit andet powershell vindue, kan se at giver en log besked om at brugerne ikke har rettighed til dataen.
