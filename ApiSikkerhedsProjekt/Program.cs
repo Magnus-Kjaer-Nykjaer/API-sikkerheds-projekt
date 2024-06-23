@@ -12,13 +12,6 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddHsts(options =>
-{
-  options.Preload = true;
-  options.IncludeSubDomains = true;
-  options.MaxAge = TimeSpan.FromDays(60);
-
-});
 
 if (!builder.Environment.IsDevelopment())
 {
@@ -26,6 +19,13 @@ if (!builder.Environment.IsDevelopment())
   {
     options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
     options.HttpsPort = 443;
+  });
+  builder.Services.AddHsts(options =>
+  {
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(60);
+
   });
 }
 
